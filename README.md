@@ -6,7 +6,7 @@ Upload a PDF, DOCX or TXT file and get an auto-generated multiple-choice quiz fr
 
 - **Document upload** — PDF (`pypdf`), DOCX (`python-docx`), and plain TXT up to 25 MB
 - **Automatic MCQs** — cloze-style questions built from key terms in the document, 4 options each
-- **Instant feedback** — correct answers light up green with a chime, wrong ones flash red with a buzz
+- **Instant feedback** — correct answers light up green (silent), wrong ones flash red with a sound; a second sound plays at the end if more than 5 answers were wrong
 - **Results & review** — final score, review of missed questions, and a "retry missed questions" mode
 - **Quiz history** — recent quizzes and last scores are stored in SQLite
 - **UI** — minimal dark glassmorphism interface with golden accents, sounds bundled in `static/sounds/`
@@ -43,5 +43,5 @@ quizgen.py             Text extraction + MCQ generation
 templates/             index.html, quiz.html
 static/css/style.css   Dark glassmorphism theme
 static/js/quiz.js      Quiz flow, scoring, sound playback
-static/sounds/         correct.wav, wrong.wav
+static/sounds/         wrong.mp3, 2wrong.mp3
 ```

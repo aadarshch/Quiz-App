@@ -14,6 +14,9 @@ uploads/
 # Environment
 .env
 
+# Source audio (copies live in static/sounds)
+/sounds/
+
 # Editors / OS
 .vscode/
 .idea/

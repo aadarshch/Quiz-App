@@ -18,11 +18,11 @@
   var retryBtn = document.getElementById("retry-btn");
 
   var sounds = {
-    correct: new Audio("/static/sounds/correct.wav"),
-    wrong: new Audio("/static/sounds/wrong.wav")
+    wrong: new Audio("/static/sounds/wrong.mp3"),
+    end: new Audio("/static/sounds/2wrong.mp3")
   };
-  sounds.correct.volume = 0.7;
   sounds.wrong.volume = 0.6;
+  sounds.end.volume = 0.7;
 
   var queue = [];
   var index = 0;
@@ -115,7 +115,6 @@
 
     if (correct) {
       score += 1;
-      playSound("correct");
       feedbackEl.textContent = "Correct.";
       feedbackEl.className = "feedback good";
     } else {
@@ -134,6 +133,10 @@
 
     var total = queue.length;
     var percent = total > 0 ? Math.round((score / total) * 100) : 0;
+
+    if (missed.length > 5) {
+      playSound("end");
+    }
 
     scoreValue.textContent = String(score);
     scoreTotal.textContent = "/" + total;
