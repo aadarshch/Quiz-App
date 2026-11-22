@@ -25,6 +25,16 @@ python -m venv .venv
 
 Then open **http://127.0.0.1:5000** in your browser and upload a PDF, DOCX or TXT file to start a quiz. On later runs, only the last two lines are needed.
 
+## Host it online (Render, free)
+
+The included `render.yaml` makes deployment one step:
+
+1. Sign up at https://render.com with your GitHub account.
+2. Dashboard → **New +** → **Blueprint** → select `aadarshch/Quiz-App` → **Apply**.
+3. Wait for the first deploy (2–5 minutes), then open the `https://quiz-app-*.onrender.com` URL.
+
+Free instances sleep after ~15 minutes of inactivity (the first visit takes ~30 s to wake), and quiz history resets on redeploy because the free filesystem is ephemeral.
+
 ## How questions are generated
 
 Text is extracted, split into sentences, and factual-looking sentences are turned into fill-in-the-blank questions. The blanked term becomes the answer, and three same-length terms from elsewhere in the document become the distractors. About 12 questions are generated per document (minimum 3).
