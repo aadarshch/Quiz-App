@@ -183,7 +183,9 @@
     var percent = total > 0 ? Math.round((score / total) * 100) : 0;
 
     if (missed.length > 5) {
-      playSound("end");
+      setTimeout(function () {
+        playSound("end");
+      }, 1000);
     }
 
     scoreValue.textContent = String(score);
