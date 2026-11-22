@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz App — turn documents into quizzes{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <p class="eyebrow">Golden Quiz</p>
+  <h1>Turn any document<br>into a quiz.</h1>
+  <p class="subtitle">Upload a PDF, DOCX or TXT and answer questions pulled straight from its pages.</p>
+</header>
+
+<section class="glass upload-card">
+  <form id="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <label class="dropzone" id="dropzone" for="file-input">
+      <input id="file-input" name="file" type="file" accept=".pdf,.docx,.txt" required>
+      <span class="dropzone-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>
+        </svg>
+      </span>
+      <span class="dropzone-title" id="dropzone-title">Drop your file here, or browse</span>
+      <span class="dropzone-hint">PDF · DOCX · TXT — up to {{ max_mb }} MB</span>
+    </label>
+    <button class="btn btn-primary" type="submit" id="upload-btn">Generate quiz</button>
+  </form>
+  {% if error %}
+    <p class="form-error" role="alert">{{ error }}</p>
+  {% endif %}
+  <p class="fine-print">Scanned PDFs without selectable text aren't supported yet.</p>
+</section>
+
+{% if quizzes %}
+<section class="recent">
+  <h2>Recent quizzes</h2>
+  <ul class="recent-list">
+    {% for quiz in quizzes %}
+    <li>
+      <a class="glass recent-item" href="{{ url_for('quiz_view', quiz_id=quiz.id) }}">
+        <span class="recent-name">{{ quiz.filename }}</span>
+        <span class="recent-meta">
+          {{ quiz.question_count }} questions · {{ quiz.created_at[:16] }}
+        </span>
+        {% if quiz.score is not none %}
+          <span class="chip">Last score {{ quiz.score }}/{{ quiz.total }}</span>
+        {% endif %}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const input = document.getElementById("file-input");
+    const dropzone = document.getElementById("dropzone");
+    const title = document.getElementById("dropzone-title");
+    const button = document.getElementById("upload-btn");
+    const form = document.getElementById("upload-form");
+
+    function showName() {
+      if (input.files && input.files.length > 0) {
+        title.textContent = input.files[0].name;
+        dropzone.classList.add("has-file");
+      }
+    }
+
+    input.addEventListener("change", showName);
+
+    ["dragenter", "dragover"].forEach(function (name) {
+      dropzone.addEventListener(name, function (event) {
+        event.preventDefault();
+        dropzone.classList.add("dragging");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(function (name) {
+      dropzone.addEventListener(name, function (event) {
+        event.preventDefault();
+        dropzone.classList.remove("dragging");
+      });
+    });
+
+    dropzone.addEventListener("drop", function (event) {
+      if (event.dataTransfer.files.length > 0) {
+        input.files = event.dataTransfer.files;
+        showName();
+      }
+    });
+
+    form.addEventListener("submit", function () {
+      if (input.files.length > 0) {
+        button.disabled = true;
+        button.textContent = "Building your quiz…";
+      }
+    });
+  })();
+</script>
+{% endblock %}

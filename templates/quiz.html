@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz · {{ quiz.filename }}{% endblock %}
+
+{% block content %}
+<header class="quiz-header">
+  <a class="back-link" href="{{ url_for('index') }}">← Home</a>
+  <div class="quiz-meta">
+    <span class="quiz-file" title="{{ quiz.filename }}">{{ quiz.filename }}</span>
+    <span class="quiz-progress-label" id="progress-label">Question 1 of {{ quiz.questions|length }}</span>
+  </div>
+  <div class="progress" role="progressbar" aria-label="Quiz progress">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+</header>
+
+<main class="glass quiz-card" id="quiz-card">
+  <p class="question-index" id="question-index">Question 1</p>
+  <h2 class="question-prompt" id="question-prompt"></h2>
+  <div class="options" id="options"></div>
+  <p class="feedback" id="feedback" aria-live="polite"></p>
+  <button class="btn btn-primary" id="next-btn" hidden>Next question</button>
+</main>
+
+<section class="glass quiz-card end-card" id="end-card" hidden>
+  <p class="eyebrow">Quiz complete</p>
+  <p class="score-big"><span id="score-value">0</span><span class="score-total" id="score-total">/0</span></p>
+  <p class="score-message" id="score-message"></p>
+  <div class="review" id="review"></div>
+  <div class="end-actions">
+    <button class="btn btn-primary" id="retry-btn" hidden>Retry missed questions</button>
+    <a class="btn btn-ghost" href="{{ url_for('index') }}">New quiz</a>
+  </div>
+</section>
+
+<script id="quiz-data" type="application/json">{{ quiz|tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}
