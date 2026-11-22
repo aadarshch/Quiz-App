@@ -27,7 +27,9 @@ Then open **http://127.0.0.1:5000** in your browser and upload a PDF, DOCX or TX
 
 ## Host it online (Render, free)
 
-The included `render.yaml` makes deployment one step:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aadarshch/Quiz-App)
+
+The button above deploys the included `render.yaml` in one step. If you prefer the manual route:
 
 1. Sign up at https://render.com with your GitHub account.
 2. Dashboard → **New +** → **Blueprint** → select `aadarshch/Quiz-App` → **Apply**.
