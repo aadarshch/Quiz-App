@@ -11,23 +11,19 @@ Upload a PDF, DOCX or TXT file and get an auto-generated multiple-choice quiz fr
 - **Quiz history** — recent quizzes and last scores are stored in SQLite
 - **UI** — minimal dark glassmorphism interface with golden accents, sounds bundled in `static/sounds/`
 
-## Run it (Windows)
+## Quick start (Windows)
+
+Requires Python 3.10 or newer (`python --version` to check).
 
 ```powershell
-cd D:\Quiz
-.\.venv\Scripts\python.exe app.py
-```
-
-Then open **http://127.0.0.1:5000** in your browser.
-
-First-time setup on a fresh machine:
-
-```powershell
-cd D:\Quiz
+git clone https://github.com/aadarshch/Quiz-App.git
+cd Quiz-App
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe app.py
 ```
+
+Then open **http://127.0.0.1:5000** in your browser and upload a PDF, DOCX or TXT file to start a quiz. On later runs, only the last two lines are needed.
 
 ## How questions are generated
 
