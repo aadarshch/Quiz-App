@@ -17,12 +17,44 @@
   var reviewEl = document.getElementById("review");
   var retryBtn = document.getElementById("retry-btn");
 
-  var sounds = {
-    wrong: new Audio("/static/sounds/wrong.mp3"),
-    end: new Audio("/static/sounds/2wrong.mp3")
+  var soundUrls = {
+    wrong: "/static/sounds/wrong.mp3",
+    end: "/static/sounds/2wrong.mp3"
   };
-  sounds.wrong.volume = 0.6;
-  sounds.end.volume = 0.7;
+  var soundVolumes = { wrong: 0.6, end: 0.7 };
+  var fallbackPlayers = {};
+  Object.keys(soundUrls).forEach(function (name) {
+    var player = new Audio(soundUrls[name]);
+    player.preload = "auto";
+    player.volume = soundVolumes[name];
+    fallbackPlayers[name] = player;
+  });
+
+  var audioCtx = null;
+  var soundBuffers = {};
+  var AudioCtor = window.AudioContext || window.webkitAudioContext;
+
+  function initAudio() {
+    if (!AudioCtor) {
+      return;
+    }
+    audioCtx = new AudioCtor();
+    Object.keys(soundUrls).forEach(function (name) {
+      fetch(soundUrls[name])
+        .then(function (response) {
+          return response.arrayBuffer();
+        })
+        .then(function (data) {
+          return new Promise(function (resolve, reject) {
+            audioCtx.decodeAudioData(data, resolve, reject);
+          });
+        })
+        .then(function (buffer) {
+          soundBuffers[name] = buffer;
+        })
+        .catch(function () {});
+    });
+  }
 
   var queue = [];
   var index = 0;
@@ -31,9 +63,22 @@
   var answered = false;
 
   function playSound(name) {
-    var sound = sounds[name];
-    sound.currentTime = 0;
-    var promise = sound.play();
+    if (audioCtx && soundBuffers[name]) {
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume().catch(function () {});
+      }
+      var source = audioCtx.createBufferSource();
+      var gain = audioCtx.createGain();
+      gain.gain.value = soundVolumes[name];
+      source.buffer = soundBuffers[name];
+      source.connect(gain);
+      gain.connect(audioCtx.destination);
+      source.start(0);
+      return;
+    }
+    var player = fallbackPlayers[name];
+    player.currentTime = 0;
+    var promise = player.play();
     if (promise && promise.catch) {
       promise.catch(function () {});
     }
@@ -102,6 +147,10 @@
     var correct = chosen === question.answerIndex;
     var total = queue.length;
 
+    if (!correct) {
+      playSound("wrong");
+    }
+
     Array.prototype.forEach.call(optionsEl.children, function (button, i) {
       button.disabled = true;
       if (i === question.answerIndex) {
@@ -119,7 +168,6 @@
       feedbackEl.className = "feedback good";
     } else {
       missed.push(question);
-      playSound("wrong");
       feedbackEl.textContent = "Not quite — the answer is: " + question.options[question.answerIndex];
       feedbackEl.className = "feedback bad";
     }
@@ -197,6 +245,7 @@
     render();
   });
 
+  initAudio();
   queue = data.questions.slice();
   render();
 })();
